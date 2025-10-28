@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Personas</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --futbol-color: #1abc9c;
+            --baile-color: #9b59b6;
+            --pintura-color: #e67e22;
+            --otro-color: #95a5a6;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        h1 {
+            color: var(--dark-color);
+        }
+        
+        .stats-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            flex: 1;
+            min-width: 150px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            border-top: 4px solid;
+        }
+        
+        .stat-card.futbol {
+            border-color: var(--futbol-color);
+        }
+        
+        .stat-card.baile {
+            border-color: var(--baile-color);
+        }
+        
+        .stat-card.pintura {
+            border-color: var(--pintura-color);
+        }
+        
+        .stat-card.otro {
+            border-color: var(--otro-color);
+        }
+        
+        .stat-card.total {
+            border-color: var(--primary-color);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .filter-box {
+            display: flex;
+            gap: 10px;
+        }
+        
+        select, button {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: white;
+            cursor: pointer;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .add-btn {
+            background-color: var(--success-color);
+        }
+        
+        .add-btn:hover {
+            background-color: #27ae60;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: left;
+            padding: 12px 15px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        th:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        th::after {
+            content: '↕';
+            position: absolute;
+            right: 10px;
+            opacity: 0.7;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .action-cell {
+            text-align: center;
+        }
+        
+        .delete-btn {
+            background-color: var(--accent-color);
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .form-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        
+        .cancel-btn {
+            background-color: #95a5a6;
+        }
+        
+        .cancel-btn:hover {
+            background-color: #7f8c8d;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .search-box, .filter-box {
+                width: 100%;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Registro de Personas</h1>
+            <button class="add-btn" id="showFormBtn">Agregar Persona</button>
+        </header>
+        
+        <div class="stats-container" id="statsContainer">
+            <!-- Las tarjetas de estadísticas se generarán dinámicamente -->
+        </div>
+        
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, correo o actividad...">
+            </div>
+            <div class="filter-box">
+                <select id="activityFilter">
+                    <option value="">Todas las actividades</option>
+                    <option value="FUTBOL">FUTBOL</option>
+                    <option value="BAILE">BAILE</option>
+                    <option value="PINTURA">PINTURA</option>
+                    <option value="OTRO">OTRO</option>
+                </select>
+                <button id="clearFilters">Limpiar Filtros</button>
+            </div>
+        </div>
+        
+        <table id="peopleTable">
+            <thead>
+                <tr>
+                    <th data-sort="numero">NÚMERO</th>
+                    <th data-sort="nombre">NOMBRE</th>
+                    <th data-sort="correo">CORREO</th>
+                    <th data-sort="contacto">NÚMERO DE CONTACTO</th>
+                    <th data-sort="actividad">ACTIVIDADES</th>
+                    <th>ACCIONES</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Los datos se cargarán aquí dinámicamente -->
+            </tbody>
+        </table>
+        
+        <div class="form-container" id="addForm">
+            <h2>Agregar Nueva Persona</h2>
+            <form id="personForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre">NOMBRE</label>
+                        <input type="text" id="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="correo">CORREO</label>
+                        <input type="email" id="correo" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="contacto">NÚMERO DE CONTACTO</label>
+                        <input type="text" id="contacto" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="actividad">ACTIVIDAD</label>
+                        <select id="actividad" required>
+                            <option value="">Selecciona una actividad</option>
+                            <option value="FUTBOL">FUTBOL</option>
+                            <option value="BAILE">BAILE</option>
+                            <option value="PINTURA">PINTURA</option>
+                            <option value="OTRO">OTRO</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="cancel-btn" id="cancelBtn">Cancelar</button>
+                    <button type="submit" class="add-btn">Agregar Persona</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Datos iniciales basados en tu tabla
+        let peopleData = [
+            { numero: 1, nombre: "PEDRO", correo: "PPP@", contacto: "1234", actividad: "FUTBOL" },
+            { numero: 2, nombre: "HUGO", correo: "HHH@", contacto: "5678", actividad: "BAILE" },
+            { numero: 3, nombre: "PACO", correo: "AAA@", contacto: "92345", actividad: "PINTURA" },
+            { numero: 4, nombre: "LUIS", correo: "LLL@", contacto: "2345", actividad: "BAILE" },
+            { numero: 5, nombre: "MARTIN", correo: "MMM@", contacto: "56778", actividad: "FUTBOL" }
+        ];
+
+        // Elementos del DOM
+        const tableBody = document.getElementById('tableBody');
+        const searchInput = document.getElementById('searchInput');
+        const activityFilter = document.getElementById('activityFilter');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        const showFormBtn = document.getElementById('showFormBtn');
+        const addForm = document.getElementById('addForm');
+        const personForm = document.getElementById('personForm');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const tableHeaders = document.querySelectorAll('th[data-sort]');
+        const statsContainer = document.getElementById('statsContainer');
+
+        // Variables para ordenamiento
+        let currentSort = { column: 'numero', direction: 'asc' };
+
+        // Calcular estadísticas por actividad
+        function calculateStats() {
+            const stats = {
+                'FUTBOL': 0,
+                'BAILE': 0,
+                'PINTURA': 0,
+                'OTRO': 0,
+                'TOTAL': peopleData.length
+            };
+            
+            peopleData.forEach(person => {
+                if (stats.hasOwnProperty(person.actividad)) {
+                    stats[person.actividad]++;
+                } else {
+                    stats['OTRO']++;
+                }
+            });
+            
+            return stats;
+        }
+
+        // Mostrar estadísticas
+        function renderStats() {
+            const stats = calculateStats();
+            statsContainer.innerHTML = '';
+            
+            // Crear tarjetas para cada actividad
+            Object.keys(stats).forEach(activity => {
+                if (activity === 'TOTAL') return;
+                
+                const statCard = document.createElement('div');
+                statCard.className = `stat-card ${activity.toLowerCase()}`;
+                
+                statCard.innerHTML = `
+                    <div class="stat-value">${stats[activity]}</div>
+                    <div class="stat-label">${activity}</div>
+                `;
+                
+                statsContainer.appendChild(statCard);
+            });
+            
+            // Agregar tarjeta de total
+            const totalCard = document.createElement('div');
+            totalCard.className = 'stat-card total';
+            
+            totalCard.innerHTML = `
+                <div class="stat-value">${stats.TOTAL}</div>
+                <div class="stat-label">TOTAL PERSONAS</div>
+            `;
+            
+            statsContainer.appendChild(totalCard);
+        }
+
+        // Inicializar la tabla
+        function renderTable(data) {
+            tableBody.innerHTML = '';
+            
+            data.forEach(person => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${person.numero}</td>
+                    <td>${person.nombre}</td>
+                    <td>${person.correo}</td>
+                    <td>${person.contacto}</td>
+                    <td>${person.actividad}</td>
+                    <td class="action-cell">
+                        <button class="delete-btn" data-id="${person.numero}">Eliminar</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            
+            // Agregar event listeners a los botones de eliminar
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    deletePerson(id);
+                });
+            });
+        }
+
+        // Filtrar y buscar datos
+        function filterData() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const activityValue = activityFilter.value;
+            
+            let filteredData = peopleData.filter(person => {
+                const matchesSearch = 
+                    person.nombre.toLowerCase().includes(searchTerm) ||
+                    person.correo.toLowerCase().includes(searchTerm) ||
+                    person.actividad.toLowerCase().includes(searchTerm);
+                
+                const matchesActivity = activityValue === '' || person.actividad === activityValue;
+                
+                return matchesSearch && matchesActivity;
+            });
+            
+            // Aplicar ordenamiento
+            sortData(filteredData, currentSort.column, currentSort.direction);
+            
+            renderTable(filteredData);
+            renderStats(); // Actualizar estadísticas después de filtrar
+        }
+
+        // Ordenar datos
+        function sortData(data, column, direction) {
+            data.sort((a, b) => {
+                let aValue = a[column];
+                let bValue = b[column];
+                
+                // Si es numérico, convertir a número
+                if (column === 'numero' || column === 'contacto') {
+                    aValue = parseInt(aValue);
+                    bValue = parseInt(bValue);
+                } else {
+                    // Para texto, convertir a minúsculas para comparación sin distinción de mayúsculas/minúsculas
+                    aValue = aValue.toString().toLowerCase();
+                    bValue = bValue.toString().toLowerCase();
+                }
+                
+                if (direction === 'asc') {
+                    return aValue > bValue ? 1 : -1;
+                } else {
+                    return aValue < bValue ? 1 : -1;
+                }
+            });
+        }
+
+        // Agregar nueva persona
+        function addPerson(event) {
+            event.preventDefault();
+            
+            const nombre = document.getElementById('nombre').value;
+            const correo = document.getElementById('correo').value;
+            const contacto = document.getElementById('contacto').value;
+            const actividad = document.getElementById('actividad').value;
+            
+            // Encontrar el siguiente número disponible
+            const nextNumero = peopleData.length > 0 
+                ? Math.max(...peopleData.map(p => p.numero)) + 1 
+                : 1;
+            
+            const newPerson = {
+                numero: nextNumero,
+                nombre: nombre.toUpperCase(),
+                correo: correo.toUpperCase(),
+                contacto: contacto,
+                actividad: actividad
+            };
+            
+            peopleData.push(newPerson);
+            filterData();
+            
+            // Limpiar y ocultar el formulario
+            personForm.reset();
+            addForm.style.display = 'none';
+        }
+
+        // Eliminar persona
+        function deletePerson(id) {
+            if (confirm('¿Estás seguro de que quieres eliminar esta persona?')) {
+                peopleData = peopleData.filter(person => person.numero !== id);
+                filterData();
+            }
+        }
+
+        // Event Listeners
+        searchInput.addEventListener('input', filterData);
+        activityFilter.addEventListener('change', filterData);
+        clearFiltersBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            activityFilter.value = '';
+            filterData();
+        });
+        
+        showFormBtn.addEventListener('click', () => {
+            addForm.style.display = 'block';
+        });
+        
+        cancelBtn.addEventListener('click', () => {
+            addForm.style.display = 'none';
+            personForm.reset();
+        });
+        
+        personForm.addEventListener('submit', addPerson);
+        
+        // Ordenamiento por columnas
+        tableHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const column = header.getAttribute('data-sort');
+                
+                if (currentSort.column === column) {
+                    // Cambiar dirección si es la misma columna
+                    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    // Nueva columna, orden ascendente por defecto
+                    currentSort.column = column;
+                    currentSort.direction = 'asc';
+                }
+                
+                filterData();
+            });
+        });
+
+        // Inicializar la tabla con los datos
+        renderTable(peopleData);
+        renderStats();
+    </script>
+</body>
+</html>
